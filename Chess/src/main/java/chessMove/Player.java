@@ -5,37 +5,37 @@ import java.util.regex.Matcher;
 
 public class Player {
 	
-
-    public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-    	
-		Scanner sc = new Scanner(System.in);
- 		System.out.println("Enter input");
- 		String input = sc.nextLine();
+    public static void main(String[] args) {
+ 		
+    	String input = null;
+    	Scanner sc= new Scanner(System.in);
+		try {
+			System.out.println("Enter input");
+			input = sc.nextLine();
+		} 
+		finally {
+			sc.close();
+		}
  		
  		Board bd = new Board();
  		
- 		String[] arrOfInput = bd.getPieceAndMove(input);
+		String[] arrOfInput = bd.getPieceAndMove(input.trim());
  		
- 		if (arrOfInput.length < 2)
+ 		if (arrOfInput == null)
+ 			System.exit(0);	
+ 		
+ 		if(!bd.checkPiece(arrOfInput[0]))
  			System.exit(0);
- 		
- 		if (!bd.checkPiece(arrOfInput[0]))
- 			System.exit(0);
- 		
- 		Matcher arrOfMove = bd.getRowAndCol(arrOfInput[1]);
- 			
- 		if (arrOfMove.find()) {
- 			
- 			Class cls = Class.forName("main.java.chessMove." + arrOfInput[0]);
- 			Piece pi = (Piece) cls.newInstance();
- 			
- 			String output = pi.possibleMoves(arrOfMove.group(1).charAt(0),Integer.parseInt(arrOfMove.group(2)));
- 			System.out.println(output);
  	
- 		} else {
- 					
- 			System.out.println("Incorrect move " + arrOfInput[1]);
- 		}
+ 		Matcher arrOfMove = bd.getRowAndCol(arrOfInput[1]);
+ 		
+ 		if (arrOfMove == null)
+ 			System.exit(0);	
+ 		
+ 		String output = bd.findAllPossibleMoves(arrOfInput[0], arrOfMove);
+ 		
+ 		if (output != null)
+ 			System.out.println(output);
  	
     }
 	

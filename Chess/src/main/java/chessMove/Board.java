@@ -10,18 +10,57 @@ public class Board {
 	
 	private Set<String> pieces = new HashSet<>(Arrays.asList("King", "Queen","Bishop","Horse","Rook","Pawn"));
 	
-	public boolean checkPiece(String piece) {
-		return pieces.contains(piece);
-	}
-	
 	public String[] getPieceAndMove(String input) {
-		return input.split(" ", -1);
+		String[] arrOfInput;
+		try {
+			arrOfInput = input.split(" ", 2);
+			if (arrOfInput.length < 2) {
+				System.out.println("Invalid input");
+				return null;
+			}
+			return arrOfInput;
+		}
+		catch (NullPointerException e) {
+			System.out.println("Input cannot be null");
+			return null;
+		}
 	}
 	
-	public Matcher getRowAndCol(String Move) {
-		String pattern = "([A-Ha-h])([1-8])";
- 		Pattern r = Pattern.compile(pattern);
- 		return r.matcher(Move);
+	public boolean checkPiece(String piece) {
+		if(!pieces.contains(piece)) {
+			System.out.println("Incorrect piece " + piece);
+			return false;
+		}
+		return true;
 	}
 	
+	public Matcher getRowAndCol(String move) {
+		String regex = "([A-H])([1-8])";
+ 		Pattern pattern = Pattern.compile(regex);
+ 		try {
+ 			Matcher matcher = pattern.matcher(move);
+ 			if(matcher.find()) {
+ 				return matcher;
+ 			}
+ 			else {
+ 				System.out.println("Incorrect move " + move);
+ 				return null;
+ 			}
+ 		} catch (NullPointerException e) {
+			System.out.println("Move cannot be null");
+			return null;
+		}
+	}
+	
+	public String findAllPossibleMoves(String pieceName, Matcher arrOfMove) {
+		Class cls;	Piece pi;
+		try {
+			cls = Class.forName("main.java.chessMove." + pieceName);
+			pi = (Piece) cls.newInstance();
+			return pi.possibleMoves(arrOfMove.group(1).charAt(0),Integer.parseInt(arrOfMove.group(2)));
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			System.out.println("Incorrect piece");
+			return null;
+		}
+	}
 }	
